@@ -6,12 +6,11 @@
 <title>GRID Expert Advisors — Sal de la ejecución, vuelve a ser CEO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
 <style>
   :root{
     --navy:#0B1D3A; --navy-deep:#071428; --navy-mid:#112040; --navy-card:#0E1E3A; --navy-light:#1A3060;
     --gold:#C9A84C; --gold-bright:#E2C47A; --gold-pale:#F0DFA8; --gold-dim:rgba(201,168,76,0.12); --gold-border:rgba(201,168,76,0.28); --gold-border-strong:rgba(201,168,76,0.6);
-    --white:#FFF; --w80:rgba(255,255,255,.80); --w55:rgba(255,255,255,.55); --w35:rgba(255,255,255,.35); --w10:rgba(255,255,255,.07);
+    --white:#FFF; --w80:rgba(255,255,255,.80); --w55:rgba(255,255,255,.55); --w35:rgba(255,255,255,.52); /* antes .35: no daba contraste 4,5:1 */ --w10:rgba(255,255,255,.07);
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
@@ -337,7 +336,6 @@
   <div class="contact"><a href="tel:+50670400607">+506 7040 0607</a></div>
 </footer>
 
-<script src="https://assets.calendly.com/assets/external/widget.js" async></script>
 <script>
   // === CONFIGURACIÓN ===
   const T_CARGA = Date.now(); // antispam: nadie completa 8 preguntas en menos de 5 s
@@ -372,7 +370,17 @@
     return QUALIFYING_FACTURACION.includes(data.facturacion);
   }
 
+  // Calendly se carga recien cuando la persona califica: no instala cookies de terceros al abrir la pagina.
+  function cargaCalendly(){
+    if(document.getElementById('calendly-js')) return;
+    const l = document.createElement('link'); l.rel = 'stylesheet';
+    l.href = 'https://assets.calendly.com/assets/external/widget.css'; document.head.appendChild(l);
+    const s = document.createElement('script'); s.id = 'calendly-js'; s.async = true;
+    s.src = 'https://assets.calendly.com/assets/external/widget.js'; document.head.appendChild(s);
+  }
+
   function initCalendly(data){
+    cargaCalendly();
     const container = document.getElementById('calendlyContainer');
     container.innerHTML = '';
     const tryInit = () => {
