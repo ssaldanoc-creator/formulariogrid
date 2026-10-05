@@ -131,6 +131,7 @@
   footer .contact a{color:var(--w55); text-decoration:none; transition:color .2s;}
   footer .contact a:hover{color:var(--gold-bright);}
 </style>
+<style>.hp-field{position:absolute!important;left:-10000px!important;top:auto;width:1px;height:1px;overflow:hidden}</style>
 </head>
 <body>
 
@@ -297,6 +298,10 @@
       <div class="field-hint">Closers, setters, manuales y automatizaciones operando como un solo sistema.</div>
     </div>
 
+    <div class="hp-field" aria-hidden="true">
+      <label for="sitio_web">No completar este campo</label>
+      <input type="text" id="sitio_web" tabindex="-1" autocomplete="off">
+    </div>
     <button type="submit" class="submit-btn" id="submitBtn">Quiero agendar mi llamada</button>
     <div class="form-foot">
       Tus datos solo se usan para evaluar si calzas con el perfil de GRID.<br>
@@ -335,6 +340,7 @@
 <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
 <script>
   // === CONFIGURACIÓN ===
+  const T_CARGA = Date.now(); // antispam: nadie completa 8 preguntas en menos de 5 s
   const ENDPOINT = "https://hook.us2.make.com/njef9jrf177j3yxplnbyrg583vwvd0oy";
   const WHATSAPP_NUMBER = "50670400607";
   const CALENDLY_URL = "https://calendly.com/gridexpertadvisors-info/30min";
@@ -413,7 +419,9 @@
     // Solo hay que apuntar ENDPOINT al webhook de tu automatización y mapear estas
     // claves (nombre, whatsapp, email, tipoEmpresa, facturacion, trabajadores,
     // ejecucion, inversion, calificado, utm_source, etc.) a los campos de tu CRM.
-    try{
+    // Antispam: campo trampa lleno o envio en menos de 5 s = bot. Se simula exito sin enviar nada.
+    const esBot = document.getElementById('sitio_web').value !== '' || (Date.now() - T_CARGA) < 5000;
+    if(!esBot) try{
       await fetch(ENDPOINT, {
         method: "POST",
         headers: {"Content-Type":"application/json"},
